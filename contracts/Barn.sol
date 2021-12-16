@@ -2,8 +2,8 @@
 
 pragma solidity ^0.8.0;
 
-import "./IERC721Receiver.sol";
-import "./Pausable.sol";
+import "./dependencies/IERC721Receiver.sol";
+import "./dependencies/Pausable.sol";
 import "./Woolf.sol";
 import "./WOOL.sol";
 

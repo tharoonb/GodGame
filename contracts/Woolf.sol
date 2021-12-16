@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT LICENSE
 
 pragma solidity ^0.8.0;
-import "./Ownable.sol";
-import "./Pausable.sol";
-import "./ERC721Enumerable.sol";
-import "./IWoolf.sol";
-import "./IBarn.sol";
-import "./ITraits.sol";
+import "./dependencies/Ownable.sol";
+import "./dependencies/Pausable.sol";
+import "./dependencies/ERC721Enumerable.sol";
+import "./interfaces/IWoolf.sol";
+import "./interfaces/IBarn.sol";
+import "./dependencies/ITraits.sol";
 import "./WOOL.sol";
 
 contract Woolf is IWoolf, ERC721Enumerable, Ownable, Pausable {

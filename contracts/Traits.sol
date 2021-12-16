@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT LICENSE
 
 pragma solidity ^0.8.0;
-import "./Ownable.sol";
-import "./Strings.sol";
-import "./ITraits.sol";
-import "./IWoolf.sol";
+import "./dependencies/Ownable.sol";
+import "./dependencies/Strings.sol";
+import "./dependencies/ITraits.sol";
+import "./interfaces/IWoolf.sol";
 
 contract Traits is Ownable, ITraits {
 
