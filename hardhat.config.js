@@ -1,4 +1,8 @@
+const { randomBytes } = require("@ethersproject/random");
+
 require("@nomiclabs/hardhat-waffle");
+const fs = require("fs");
+const privateKey = fs.readFileSync(".secret").toString();
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -17,5 +21,14 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  solidity: "0.8.4",
+  networks: {
+    hardhat: {
+      chainId: 1337,
+    },
+    rinkeby: {
+      url: "https://eth-rinkeby.alchemyapi.io/v2/iExNDawOnqHH63N9c0-2_o3NKqMUNAbU",
+      accounts: [privateKey],
+    },
+  },
+  solidity: "0.8.9",
 };
