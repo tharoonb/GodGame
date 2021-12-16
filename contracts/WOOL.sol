@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT LICENSE
 
 pragma solidity ^0.8.0;
-import "./dependencies/ERC20.sol";
-import "./dependencies/Ownable.sol";
+import "./ERC20.sol";
+import "./Ownable.sol";
 
 contract WOOL is ERC20, Ownable {
 
