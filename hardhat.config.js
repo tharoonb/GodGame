@@ -29,6 +29,10 @@ module.exports = {
       url: "https://eth-rinkeby.alchemyapi.io/v2/iExNDawOnqHH63N9c0-2_o3NKqMUNAbU",
       accounts: [privateKey],
     },
+    metis: {
+      url: "https://stardust.metis.io/?owner=588",
+      accounts: [privateKey],
+    },
   },
   solidity: "0.8.9",
 };

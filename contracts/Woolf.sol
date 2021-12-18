@@ -521,7 +521,7 @@ contract Woolf is IWoolf, ERC721Enumerable, Ownable, Pausable {
     function structToHash(SheepWolf memory s) internal pure returns (uint256) {
         return
             uint256(
-                keccak256(
+                bytes32(
                     abi.encodePacked(
                         s.isSheep,
                         s.fur,
