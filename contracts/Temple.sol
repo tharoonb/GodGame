@@ -5,9 +5,9 @@ pragma solidity ^0.8.0;
 import "./IERC721Receiver.sol";
 import "./Pausable.sol";
 import "./Woolf.sol";
-import "./WOOL.sol";
+import "./FAITH.sol";
 
-contract Barn is Ownable, IERC721Receiver, Pausable {
+contract Temple is Ownable, IERC721Receiver, Pausable {
     // maximum alpha score for a Wolf
     uint8 public constant MAX_ALPHA = 8;
 
@@ -19,40 +19,40 @@ contract Barn is Ownable, IERC721Receiver, Pausable {
     }
 
     event TokenStaked(address owner, uint256 tokenId, uint256 value);
-    event SheepClaimed(uint256 tokenId, uint256 earned, bool unstaked);
-    event WolfClaimed(uint256 tokenId, uint256 earned, bool unstaked);
+    event WorshipperClaimed(uint256 tokenId, uint256 earned, bool unstaked);
+    event GodClaimed(uint256 tokenId, uint256 earned, bool unstaked);
 
-    // reference to the Woolf NFT contract
-    Woolf woolf;
-    // reference to the $WOOL contract for minting $WOOL earnings
-    WOOL wool;
+    // reference to the God NFT contract
+    God god;
+    // reference to the $FAITH contract for minting $FAITH earnings
+    FAITH faith;
 
     // maps tokenId to stake
-    mapping(uint256 => Stake) public barn;
+    mapping(uint256 => Stake) public temple;
     // maps alpha to all Wolf stakes with that alpha
-    mapping(uint256 => Stake[]) public pack;
+    mapping(uint256 => Stake[]) public pantheon;
     // tracks location of each Wolf in Pack
-    mapping(uint256 => uint256) public packIndices;
+    mapping(uint256 => uint256) public pantheonIndices;
     // total alpha scores staked
     uint256 public totalAlphaStaked = 0;
     // any rewards distributed when no wolves are staked
     uint256 public unaccountedRewards = 0;
     // amount of $WOOL due for each alpha point staked
-    uint256 public woolPerAlpha = 0;
+    uint256 public faithPerAlpha = 0;
 
     // sheep earn 10000 $WOOL per day
-    uint256 public constant DAILY_WOOL_RATE = 10000 ether;
+    uint256 public constant DAILY_FAITH_RATE = 10000 ether;
     // sheep must have 2 days worth of $WOOL to unstake or else it's too cold
     uint256 public constant MINIMUM_TO_EXIT = 2 days;
     // wolves take a 20% tax on all $WOOL claimed
-    uint256 public constant WOOL_CLAIM_TAX_PERCENTAGE = 20;
+    uint256 public constant FAITH_CLAIM_TAX_PERCENTAGE = 20;
     // there will only ever be (roughly) 2.4 billion $WOOL earned through staking
-    uint256 public constant MAXIMUM_GLOBAL_WOOL = 2400000000 ether;
+    uint256 public constant MAXIMUM_GLOBAL_FAITH = 2400000000 ether;
 
     // amount of $WOOL earned so far
-    uint256 public totalWoolEarned;
+    uint256 public totalFaithEarned;
     // number of Sheep staked in the Barn
-    uint256 public totalSheepStaked;
+    uint256 public totalWorshipperStaked;
     // the last time $WOOL was claimed
     uint256 public lastClaimTimestamp;
 
@@ -60,12 +60,12 @@ contract Barn is Ownable, IERC721Receiver, Pausable {
     bool public rescueEnabled = false;
 
     /**
-     * @param _woolf reference to the Woolf NFT contract
-     * @param _wool reference to the $WOOL token
+     * @param _god reference to the Woolf NFT contract
+     * @param _faith reference to the $WOOL token
      */
-    constructor(address _woolf, address _wool) {
-        woolf = Woolf(_woolf);
-        wool = WOOL(_wool);
+    constructor(address _god, address _faith) {
+        god = God(_god);
+        faith = FAITH(_faith);
     }
 
     /** STAKING */
@@ -75,27 +75,27 @@ contract Barn is Ownable, IERC721Receiver, Pausable {
      * @param account the address of the staker
      * @param tokenIds the IDs of the Sheep and Wolves to stake
      */
-    function addManyToBarnAndPack(address account, uint16[] calldata tokenIds)
+    function addManyToTempleAndPantheon(address account, uint16[] calldata tokenIds)
         external
     {
         require(
-            account == _msgSender() || _msgSender() == address(woolf),
+            account == _msgSender() || _msgSender() == address(god),
             "DONT GIVE YOUR TOKENS AWAY"
         );
         for (uint256 i = 0; i < tokenIds.length; i++) {
-            if (_msgSender() != address(woolf)) {
+            if (_msgSender() != address(god)) {
                 // dont do this step if its a mint + stake
                 require(
-                    woolf.ownerOf(tokenIds[i]) == _msgSender(),
+                    god.ownerOf(tokenIds[i]) == _msgSender(),
                     "AINT YO TOKEN"
                 );
-                woolf.transferFrom(_msgSender(), address(this), tokenIds[i]);
+                god.transferFrom(_msgSender(), address(this), tokenIds[i]);
             } else if (tokenIds[i] == 0) {
                 continue; // there may be gaps in the array for stolen tokens
             }
 
-            if (isSheep(tokenIds[i])) _addSheepToBarn(account, tokenIds[i]);
-            else _addWolfToPack(account, tokenIds[i]);
+            if (isWorshipper(tokenIds[i])) _addWorshipperToBarn(account, tokenIds[i]);
+            else _addGodToPantheon(account, tokenIds[i]);
         }
     }
 
@@ -104,7 +104,7 @@ contract Barn is Ownable, IERC721Receiver, Pausable {
      * @param account the address of the staker
      * @param tokenId the ID of the Sheep to add to the Barn
      */
-    function _addSheepToBarn(address account, uint256 tokenId)
+    function _addWorshipperToTemple(address account, uint256 tokenId)
         internal
         whenNotPaused
         _updateEarnings
@@ -114,7 +114,7 @@ contract Barn is Ownable, IERC721Receiver, Pausable {
             tokenId: uint16(tokenId),
             value: uint80(block.timestamp)
         });
-        totalSheepStaked += 1;
+        totalWorshipperStaked += 1;
         emit TokenStaked(account, tokenId, block.timestamp);
     }
 
@@ -123,18 +123,18 @@ contract Barn is Ownable, IERC721Receiver, Pausable {
      * @param account the address of the staker
      * @param tokenId the ID of the Wolf to add to the Pack
      */
-    function _addWolfToPack(address account, uint256 tokenId) internal {
-        uint256 alpha = _alphaForWolf(tokenId);
+    function _addGodToTemple(address account, uint256 tokenId) internal {
+        uint256 alpha = _alphaForGod(tokenId);
         totalAlphaStaked += alpha; // Portion of earnings ranges from 8 to 5
-        packIndices[tokenId] = pack[alpha].length; // Store the location of the wolf in the Pack
-        pack[alpha].push(
+        pantheonIndices[tokenId] = pantheon[alpha].length; // Store the location of the wolf in the Pack
+        pantheon[alpha].push(
             Stake({
                 owner: account,
                 tokenId: uint16(tokenId),
-                value: uint80(woolPerAlpha)
+                value: uint80(faithPerAlpha)
             })
         ); // Add the wolf to the Pack
-        emit TokenStaked(account, tokenId, woolPerAlpha);
+        emit TokenStaked(account, tokenId, faithPerAlpha);
     }
 
     /** CLAIMING / UNSTAKING */
@@ -145,16 +145,16 @@ contract Barn is Ownable, IERC721Receiver, Pausable {
      * @param tokenIds the IDs of the tokens to claim earnings from
      * @param unstake whether or not to unstake ALL of the tokens listed in tokenIds
      */
-    function claimManyFromBarnAndPack(uint16[] calldata tokenIds, bool unstake)
+    function claimManyFromTempleAndPantheon(uint16[] calldata tokenIds, bool unstake)
         external
         whenNotPaused
         _updateEarnings
     {
         uint256 owed = 0;
         for (uint256 i = 0; i < tokenIds.length; i++) {
-            if (isSheep(tokenIds[i]))
-                owed += _claimSheepFromBarn(tokenIds[i], unstake);
-            else owed += _claimWolfFromPack(tokenIds[i], unstake);
+            if (isWorshipper(tokenIds[i]))
+                owed += _claimWorshipperFromTemple(tokenIds[i], unstake);
+            else owed += _claimGodFromPantheon(tokenIds[i], unstake);
         }
         if (owed == 0) return;
         wool.mint(_msgSender(), owed);
@@ -168,44 +168,44 @@ contract Barn is Ownable, IERC721Receiver, Pausable {
      * @param unstake whether or not to unstake the Sheep
      * @return owed - the amount of $WOOL earned
      */
-    function _claimSheepFromBarn(uint256 tokenId, bool unstake)
+    function _claimWorshipperFromTemple(uint256 tokenId, bool unstake)
         internal
         returns (uint256 owed)
     {
-        Stake memory stake = barn[tokenId];
-        require(stake.owner == _msgSender(), "SWIPER, NO SWIPING");
+        Stake memory stake = temple[tokenId];
+        require(stake.owner == _msgSender(), "GODS NEVER DIE");
         require(
             !(unstake && block.timestamp - stake.value < MINIMUM_TO_EXIT),
             "GONNA BE COLD WITHOUT TWO DAY'S WOOL"
         );
-        if (totalWoolEarned < MAXIMUM_GLOBAL_WOOL) {
-            owed = ((block.timestamp - stake.value) * DAILY_WOOL_RATE) / 1 days;
+        if (totalFaithEarned < MAXIMUM_GLOBAL_FAITH) {
+            owed = ((block.timestamp - stake.value) * DAILY_FAITH_RATE) / 1 days;
         } else if (stake.value > lastClaimTimestamp) {
             owed = 0; // $WOOL production stopped already
         } else {
             owed =
-                ((lastClaimTimestamp - stake.value) * DAILY_WOOL_RATE) /
+                ((lastClaimTimestamp - stake.value) * DAILY_FAITH_RATE) /
                 1 days; // stop earning additional $WOOL if it's all been earned
         }
         if (unstake) {
             if (random(tokenId) & 1 == 1) {
                 // 50% chance of all $WOOL stolen
-                _payWolfTax(owed);
+                _payGodTax(owed);
                 owed = 0;
             }
-            woolf.safeTransferFrom(address(this), _msgSender(), tokenId, ""); // send back Sheep
-            delete barn[tokenId];
-            totalSheepStaked -= 1;
+            god.safeTransferFrom(address(this), _msgSender(), tokenId, ""); // send back Sheep
+            delete temple[tokenId];
+            totalWorshipperStaked -= 1;
         } else {
-            _payWolfTax((owed * WOOL_CLAIM_TAX_PERCENTAGE) / 100); // percentage tax to staked wolves
-            owed = (owed * (100 - WOOL_CLAIM_TAX_PERCENTAGE)) / 100; // remainder goes to Sheep owner
-            barn[tokenId] = Stake({
+            _payWolfTax((owed * FAITH_CLAIM_TAX_PERCENTAGE) / 100); // percentage tax to staked wolves
+            owed = (owed * (100 - FAITH_CLAIM_TAX_PERCENTAGE)) / 100; // remainder goes to Sheep owner
+            temple[tokenId] = Stake({
                 owner: _msgSender(),
                 tokenId: uint16(tokenId),
                 value: uint80(block.timestamp)
             }); // reset stake
         }
-        emit SheepClaimed(tokenId, owed, unstake);
+        emit WorshipperClaimed(tokenId, owed, unstake);
     }
 
     /**
@@ -215,34 +215,34 @@ contract Barn is Ownable, IERC721Receiver, Pausable {
      * @param unstake whether or not to unstake the Wolf
      * @return owed - the amount of $WOOL earned
      */
-    function _claimWolfFromPack(uint256 tokenId, bool unstake)
+    function _claimGodFromPantheon(uint256 tokenId, bool unstake)
         internal
         returns (uint256 owed)
     {
         require(
-            woolf.ownerOf(tokenId) == address(this),
-            "AINT A PART OF THE PACK"
+            god.ownerOf(tokenId) == address(this),
+            "AINT A PART OF THE PANTHEON"
         );
-        uint256 alpha = _alphaForWolf(tokenId);
-        Stake memory stake = pack[alpha][packIndices[tokenId]];
-        require(stake.owner == _msgSender(), "SWIPER, NO SWIPING");
-        owed = (alpha) * (woolPerAlpha - stake.value); // Calculate portion of tokens based on Alpha
+        uint256 alpha = _alphaForGod(tokenId);
+        Stake memory stake = pantheon[alpha][pantheonIndices[tokenId]];
+        require(stake.owner == _msgSender(), "GODS ARE ALMIGHTY");
+        owed = (alpha) * (faithPerAlpha - stake.value); // Calculate portion of tokens based on Alpha
         if (unstake) {
             totalAlphaStaked -= alpha; // Remove Alpha from total staked
-            woolf.safeTransferFrom(address(this), _msgSender(), tokenId, ""); // Send back Wolf
-            Stake memory lastStake = pack[alpha][pack[alpha].length - 1];
-            pack[alpha][packIndices[tokenId]] = lastStake; // Shuffle last Wolf to current position
-            packIndices[lastStake.tokenId] = packIndices[tokenId];
-            pack[alpha].pop(); // Remove duplicate
-            delete packIndices[tokenId]; // Delete old mapping
+            god.safeTransferFrom(address(this), _msgSender(), tokenId, ""); // Send back Wolf
+            Stake memory lastStake = pantheon[alpha][pantheon[alpha].length - 1];
+            pantheon[alpha][pantheonIndices[tokenId]] = lastStake; // Shuffle last Wolf to current position
+            pantheonIndices[lastStake.tokenId] = pantheonIndices[tokenId];
+            pantheon[alpha].pop(); // Remove duplicate
+            delete pantheonIndices[tokenId]; // Delete old mapping
         } else {
-            pack[alpha][packIndices[tokenId]] = Stake({
+            pantheon[alpha][pantheonIndices[tokenId]] = Stake({
                 owner: _msgSender(),
                 tokenId: uint16(tokenId),
-                value: uint80(woolPerAlpha)
+                value: uint80(faithPerAlpha)
             }); // reset stake
         }
-        emit WolfClaimed(tokenId, owed, unstake);
+        emit GodClaimed(tokenId, owed, unstake);
     }
 
     /**
@@ -257,35 +257,35 @@ contract Barn is Ownable, IERC721Receiver, Pausable {
         uint256 alpha;
         for (uint256 i = 0; i < tokenIds.length; i++) {
             tokenId = tokenIds[i];
-            if (isSheep(tokenId)) {
-                stake = barn[tokenId];
+            if (isWorshipper(tokenId)) {
+                stake = temple[tokenId];
                 require(stake.owner == _msgSender(), "SWIPER, NO SWIPING");
-                woolf.safeTransferFrom(
+                god.safeTransferFrom(
                     address(this),
                     _msgSender(),
                     tokenId,
                     ""
                 ); // send back Sheep
-                delete barn[tokenId];
-                totalSheepStaked -= 1;
-                emit SheepClaimed(tokenId, 0, true);
+                delete temple[tokenId];
+                totalWorshipperStaked -= 1;
+                emit WorshipperClaimed(tokenId, 0, true);
             } else {
-                alpha = _alphaForWolf(tokenId);
-                stake = pack[alpha][packIndices[tokenId]];
+                alpha = _alphaForGod(tokenId);
+                stake = pantheon[alpha][pantheonIndices[tokenId]];
                 require(stake.owner == _msgSender(), "SWIPER, NO SWIPING");
                 totalAlphaStaked -= alpha; // Remove Alpha from total staked
-                woolf.safeTransferFrom(
+                god.safeTransferFrom(
                     address(this),
                     _msgSender(),
                     tokenId,
                     ""
                 ); // Send back Wolf
-                lastStake = pack[alpha][pack[alpha].length - 1];
-                pack[alpha][packIndices[tokenId]] = lastStake; // Shuffle last Wolf to current position
-                packIndices[lastStake.tokenId] = packIndices[tokenId];
-                pack[alpha].pop(); // Remove duplicate
-                delete packIndices[tokenId]; // Delete old mapping
-                emit WolfClaimed(tokenId, 0, true);
+                lastStake = pantheon[alpha][pantheon[alpha].length - 1];
+                pantheon[alpha][pantheonIndices[tokenId]] = lastStake; // Shuffle last Wolf to current position
+                pantheonIndices[lastStake.tokenId] = pantheonIndices[tokenId];
+                pantheon[alpha].pop(); // Remove duplicate
+                delete pantheonIndices[tokenId]; // Delete old mapping
+                emit GodClaimed(tokenId, 0, true);
             }
         }
     }
@@ -296,14 +296,14 @@ contract Barn is Ownable, IERC721Receiver, Pausable {
      * add $WOOL to claimable pot for the Pack
      * @param amount $WOOL to add to the pot
      */
-    function _payWolfTax(uint256 amount) internal {
+    function _payGodfTax(uint256 amount) internal {
         if (totalAlphaStaked == 0) {
             // if there's no staked wolves
             unaccountedRewards += amount; // keep track of $WOOL due to wolves
             return;
         }
         // makes sure to include any unaccounted $WOOL
-        woolPerAlpha += (amount + unaccountedRewards) / totalAlphaStaked;
+        faithPerAlpha += (amount + unaccountedRewards) / totalAlphaStaked;
         unaccountedRewards = 0;
     }
 
@@ -311,11 +311,11 @@ contract Barn is Ownable, IERC721Receiver, Pausable {
      * tracks $WOOL earnings to ensure it stops once 2.4 billion is eclipsed
      */
     modifier _updateEarnings() {
-        if (totalWoolEarned < MAXIMUM_GLOBAL_WOOL) {
-            totalWoolEarned +=
+        if (totalFaithEarned < MAXIMUM_GLOBAL_FAITH) {
+            totalFaithEarned +=
                 ((block.timestamp - lastClaimTimestamp) *
-                    totalSheepStaked *
-                    DAILY_WOOL_RATE) /
+                    totalWorshipperStaked *
+                    DAILY_FAITH_RATE) /
                 1 days;
             lastClaimTimestamp = block.timestamp;
         }
@@ -347,8 +347,8 @@ contract Barn is Ownable, IERC721Receiver, Pausable {
      * @param tokenId the ID of the token to check
      * @return sheep - whether or not a token is a Sheep
      */
-    function isSheep(uint256 tokenId) public view returns (bool sheep) {
-        (sheep, , , , , , , , , ) = woolf.tokenTraits(tokenId);
+    function isWorshipper(uint256 tokenId) public view returns (bool worshipper) {
+        (worshipper, , , , , , , , , ) = god.tokenTraits(tokenId);
     }
 
     /**
@@ -356,8 +356,8 @@ contract Barn is Ownable, IERC721Receiver, Pausable {
      * @param tokenId the ID of the Wolf to get the alpha score for
      * @return the alpha score of the Wolf (5-8)
      */
-    function _alphaForWolf(uint256 tokenId) internal view returns (uint8) {
-        (, , , , , , , , , uint8 alphaIndex) = woolf.tokenTraits(tokenId);
+    function _alphaForGod(uint256 tokenId) internal view returns (uint8) {
+        (, , , , , , , , , uint8 alphaIndex) = god.tokenTraits(tokenId);
         return MAX_ALPHA - alphaIndex; // alpha index is 0-3
     }
 
@@ -366,18 +366,18 @@ contract Barn is Ownable, IERC721Receiver, Pausable {
      * @param seed a random value to choose a Wolf from
      * @return the owner of the randomly selected Wolf thief
      */
-    function randomWolfOwner(uint256 seed) external view returns (address) {
+    function randomGodOwner(uint256 seed) external view returns (address) {
         if (totalAlphaStaked == 0) return address(0x0);
         uint256 bucket = (seed & 0xFFFFFFFF) % totalAlphaStaked; // choose a value from 0 to total alpha staked
         uint256 cumulative;
         seed >>= 32;
         // loop through each bucket of Wolves with the same alpha score
         for (uint256 i = MAX_ALPHA - 3; i <= MAX_ALPHA; i++) {
-            cumulative += pack[i].length * i;
+            cumulative += pantheon[i].length * i;
             // if the value is not inside of that bucket, keep going
             if (bucket >= cumulative) continue;
             // get the address of a random Wolf with that alpha score
-            return pack[i][seed % pack[i].length].owner;
+            return pantheon[i][seed % pantheon[i].length].owner;
         }
         return address(0x0);
     }

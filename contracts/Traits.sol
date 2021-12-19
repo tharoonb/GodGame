@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "./Ownable.sol";
 import "./Strings.sol";
 import "./ITraits.sol";
-import "./IWoolf.sol";
+import "./IGod.sol";
 
 contract Traits is Ownable, ITraits {
 
@@ -18,7 +18,7 @@ contract Traits is Ownable, ITraits {
 
   // mapping from trait type (index) to its name
   string[9] _traitTypes = [
-    "Fur",
+    "Tone",
     "Head",
     "Ears",
     "Eyes",
@@ -38,14 +38,14 @@ contract Traits is Ownable, ITraits {
     "5"
   ];
 
-  IWoolf public woolf;
+  IGod public god;
 
   constructor() {}
 
   /** ADMIN */
 
-  function setWoolf(address _woolf) external onlyOwner {
-    woolf = IWoolf(_woolf);
+  function setGod(address _god) external onlyOwner {
+    god = IGod(_god);
   }
 
   /**
@@ -84,22 +84,22 @@ contract Traits is Ownable, ITraits {
    * @return a valid SVG of the Sheep / Wolf
    */
   function drawSVG(uint256 tokenId) public view returns (string memory) {
-    IWoolf.SheepWolf memory s = woolf.getTokenTraits(tokenId);
-    uint8 shift = s.isSheep ? 0 : 9;
+    IGod.WorshipperGod memory s = god.getTokenTraits(tokenId);
+    uint8 shift = s.isWorshipper ? 0 : 9;
 
     string memory svgString = string(abi.encodePacked(
-      drawTrait(traitData[0 + shift][s.fur]),
-      s.isSheep ? drawTrait(traitData[1 + shift][s.head]) : drawTrait(traitData[1 + shift][s.alphaIndex]),
-      s.isSheep ? drawTrait(traitData[2 + shift][s.ears]) : '',
+      drawTrait(traitData[0 + shift][s.tone]),
+      s.isWorshipper ? drawTrait(traitData[1 + shift][s.head]) : drawTrait(traitData[1 + shift][s.alphaIndex]),
+      s.isWorshipper ? drawTrait(traitData[2 + shift][s.ears]) : '',
       drawTrait(traitData[3 + shift][s.eyes]),
-      s.isSheep ? drawTrait(traitData[4 + shift][s.nose]) : '',
+      s.isWorshipper ? drawTrait(traitData[4 + shift][s.nose]) : '',
       drawTrait(traitData[5 + shift][s.mouth]),
-      s.isSheep ? '' : drawTrait(traitData[6 + shift][s.neck]),
-      s.isSheep ? drawTrait(traitData[7 + shift][s.feet]) : ''
+      s.isWorshipper ? '' : drawTrait(traitData[6 + shift][s.neck]),
+      s.isWorshipper ? drawTrait(traitData[7 + shift][s.feet]) : ''
     ));
 
     return string(abi.encodePacked(
-      '<svg id="woolf" width="100%" height="100%" version="1.1" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">',
+      '<svg id="God" width="100%" height="100%" version="1.1" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">',
       svgString,
       "</svg>"
     ));
@@ -127,11 +127,11 @@ contract Traits is Ownable, ITraits {
    * @return a JSON array of all of the attributes for given token ID
    */
   function compileAttributes(uint256 tokenId) public view returns (string memory) {
-    IWoolf.SheepWolf memory s = woolf.getTokenTraits(tokenId);
+    IGod.WorshipperGod memory s = god.getTokenTraits(tokenId);
     string memory traits;
-    if (s.isSheep) {
+    if (s.isWorshipper) {
       traits = string(abi.encodePacked(
-        attributeForTypeAndValue(_traitTypes[0], traitData[0][s.fur].name),',',
+        attributeForTypeAndValue(_traitTypes[0], traitData[0][s.tone].name),',',
         attributeForTypeAndValue(_traitTypes[1], traitData[1][s.head].name),',',
         attributeForTypeAndValue(_traitTypes[2], traitData[2][s.ears].name),',',
         attributeForTypeAndValue(_traitTypes[3], traitData[3][s.eyes].name),',',
@@ -141,7 +141,7 @@ contract Traits is Ownable, ITraits {
       ));
     } else {
       traits = string(abi.encodePacked(
-        attributeForTypeAndValue(_traitTypes[0], traitData[9][s.fur].name),',',
+        attributeForTypeAndValue(_traitTypes[0], traitData[9][s.tone].name),',',
         attributeForTypeAndValue(_traitTypes[1], traitData[10][s.alphaIndex].name),',',
         attributeForTypeAndValue(_traitTypes[3], traitData[12][s.eyes].name),',',
         attributeForTypeAndValue(_traitTypes[5], traitData[14][s.mouth].name),',',
@@ -153,9 +153,9 @@ contract Traits is Ownable, ITraits {
       '[',
       traits,
       '{"trait_type":"Generation","value":',
-      tokenId <= woolf.getPaidTokens() ? '"Gen 0"' : '"Gen 1"',
+      tokenId <= god.getPaidTokens() ? '"Gen 0"' : '"Gen 1"',
       '},{"trait_type":"Type","value":',
-      s.isSheep ? '"Sheep"' : '"Wolf"',
+      s.isWorshipper ? '"Worshipper"' : '"God"',
       '}]'
     ));
   }
@@ -166,11 +166,11 @@ contract Traits is Ownable, ITraits {
    * @return a base64 encoded JSON dictionary of the token's metadata and SVG
    */
   function tokenURI(uint256 tokenId) public view override returns (string memory) {
-    IWoolf.SheepWolf memory s = woolf.getTokenTraits(tokenId);
+    IGod.WorshipperGod memory s = god.getTokenTraits(tokenId);
 
     string memory metadata = string(abi.encodePacked(
       '{"name": "',
-      s.isSheep ? 'Sheep #' : 'Wolf #',
+      s.isWorshipper ? 'Worshipper #' : 'God #',
       tokenId.toString(),
       '", "description": "Thousands of Sheep and Wolves compete on a farm in the metaverse. A tempting prize of $WOOL awaits, with deadly high stakes. All the metadata and images are generated and stored 100% on-chain. No IPFS. NO API. Just the Ethereum blockchain.", "image": "data:image/svg+xml;base64,',
       base64(bytes(drawSVG(tokenId))),

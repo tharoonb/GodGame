@@ -4,12 +4,12 @@ pragma solidity ^0.8.0;
 import "./Ownable.sol";
 import "./Pausable.sol";
 import "./ERC721Enumerable.sol";
-import "./IWoolf.sol";
-import "./IBarn.sol";
+import "./IGod.sol";
+import "./ITemple.sol";
 import "./ITraits.sol";
-import "./WOOL.sol";
+import "./FAITH.sol";
 
-contract Woolf is IWoolf, ERC721Enumerable, Ownable, Pausable {
+contract God is IGod, ERC721Enumerable, Ownable, Pausable {
     // mint price
     uint256 public constant MINT_PRICE = .069420 ether;
     // max number of tokens that can be minted - 50000 in production
@@ -20,7 +20,7 @@ contract Woolf is IWoolf, ERC721Enumerable, Ownable, Pausable {
     uint16 public minted;
 
     // mapping from tokenId to a struct containing the token's traits
-    mapping(uint256 => SheepWolf) public tokenTraits;
+    mapping(uint256 => WorshipperGod) public tokenTraits;
     // mapping from hashed(tokenTrait) to the tokenId it's associated with
     // used to ensure there are no duplicates
     mapping(uint256 => uint256) public existingCombinations;
@@ -33,9 +33,9 @@ contract Woolf is IWoolf, ERC721Enumerable, Ownable, Pausable {
     uint8[][18] public aliases;
 
     // reference to the Barn for choosing random Wolf thieves
-    IBarn public barn;
+    ITemple public temple;
     // reference to $WOOL for burning on mint
-    WOOL public wool;
+    FAITH public faith;
     // reference to Traits
     ITraits public traits;
 
@@ -395,7 +395,7 @@ contract Woolf is IWoolf, ERC721Enumerable, Ownable, Pausable {
             totalWoolCost += mintCost(minted);
         }
 
-        if (totalWoolCost > 0) wool.burn(_msgSender(), totalWoolCost);
+        if (totalWoolCost > 0) faith.burn(_msgSender(), totalWoolCost);
         if (stake) barn.addManyToBarnAndPack(_msgSender(), tokenIds);
     }
 

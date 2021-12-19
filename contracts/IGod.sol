@@ -2,12 +2,12 @@
 
 pragma solidity ^0.8.0;
 
-interface IWoolf {
+interface IGod {
 
   // struct to store each token's traits
-  struct SheepWolf {
-    bool isSheep;
-    uint8 fur;
+  struct WorshipperGod {
+    bool isWorshipper;
+    uint8 tone;
     uint8 head;
     uint8 ears;
     uint8 eyes;
@@ -20,5 +20,5 @@ interface IWoolf {
 
 
   function getPaidTokens() external view returns (uint256);
-  function getTokenTraits(uint256 tokenId) external view returns (SheepWolf memory);
+  function getTokenTraits(uint256 tokenId) external view returns (WorshipperGod memory);
 }
