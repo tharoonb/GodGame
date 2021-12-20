@@ -43,11 +43,11 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
      * instantiates contract and rarity tables
      */
     constructor(
-        address _wool,
+        address _faith,
         address _traits,
         uint256 _maxTokens
-    ) ERC721("Wolf Game", "WGAME") {
-        wool = WOOL(_wool);
+    ) ERC721("Olympus Game", "OGAME") {
+        faith = FAITH(_faith);
         traits = ITraits(_traits);
         MAX_TOKENS = _maxTokens;
         PAID_TOKENS = _maxTokens / 5;
@@ -376,7 +376,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             require(msg.value == 0);
         }
 
-        uint256 totalWoolCost = 0;
+        uint256 totalFaithCost = 0;
         uint16[] memory tokenIds = stake
             ? new uint16[](amount)
             : new uint16[](0);
@@ -389,14 +389,14 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             if (!stake || recipient != _msgSender()) {
                 _safeMint(recipient, minted);
             } else {
-                _safeMint(address(barn), minted);
+                _safeMint(address(temple), minted);
                 tokenIds[i] = minted;
             }
-            totalWoolCost += mintCost(minted);
+            totalFaithCost += mintCost(minted);
         }
 
-        if (totalWoolCost > 0) faith.burn(_msgSender(), totalWoolCost);
-        if (stake) barn.addManyToBarnAndPack(_msgSender(), tokenIds);
+        if (totalFaithCost > 0) faith.burn(_msgSender(), totalFaithCost);
+        if (stake) temple.addManyToTempleAndPantheon(_msgSender(), tokenIds);
     }
 
     /**
@@ -420,7 +420,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         uint256 tokenId
     ) public virtual override {
         // Hardcode the Barn's approval so that users don't have to waste gas approving
-        if (_msgSender() != address(barn))
+        if (_msgSender() != address(temple))
             require(
                 _isApprovedOrOwner(_msgSender(), tokenId),
                 "ERC721: transfer caller is not owner nor approved"
@@ -438,7 +438,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
      */
     function generate(uint256 tokenId, uint256 seed)
         internal
-        returns (SheepWolf memory t)
+        returns (WorshipperGod memory t)
     {
         t = selectTraits(seed);
         if (existingCombinations[structToHash(t)] == 0) {
@@ -476,7 +476,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
     function selectRecipient(uint256 seed) internal view returns (address) {
         if (minted <= PAID_TOKENS || ((seed >> 245) % 10) != 0)
             return _msgSender(); // top 10 bits haven't been used
-        address thief = barn.randomWolfOwner(seed >> 144); // 144 bits reserved for trait selection
+        address thief = temple.randomGodOwner(seed >> 144); // 144 bits reserved for trait selection
         if (thief == address(0x0)) return _msgSender();
         return thief;
     }
@@ -489,12 +489,12 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
     function selectTraits(uint256 seed)
         internal
         view
-        returns (SheepWolf memory t)
+        returns (WorshipperGod memory t)
     {
-        t.isSheep = (seed & 0xFFFF) % 10 != 0;
-        uint8 shift = t.isSheep ? 0 : 9;
+        t.isWorshipper = (seed & 0xFFFF) % 10 != 0;
+        uint8 shift = t.isWorshipper ? 0 : 9;
         seed >>= 16;
-        t.fur = selectTrait(uint16(seed & 0xFFFF), 0 + shift);
+        t.tone = selectTrait(uint16(seed & 0xFFFF), 0 + shift);
         seed >>= 16;
         t.head = selectTrait(uint16(seed & 0xFFFF), 1 + shift);
         seed >>= 16;
@@ -518,13 +518,13 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
      * @param s the struct to pack into a hash
      * @return the 256 bit hash of the struct
      */
-    function structToHash(SheepWolf memory s) internal pure returns (uint256) {
+    function structToHash(WorshipperGod memory s) internal pure returns (uint256) {
         return
             uint256(
                 bytes32(
                     abi.encodePacked(
-                        s.isSheep,
-                        s.fur,
+                        s.isWorshipper,
+                        s.tone,
                         s.head,
                         s.eyes,
                         s.mouth,
@@ -562,7 +562,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         external
         view
         override
-        returns (SheepWolf memory)
+        returns (WorshipperGod memory)
     {
         return tokenTraits[tokenId];
     }
@@ -575,10 +575,10 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
 
     /**
      * called after deployment so that the contract can get random wolf thieves
-     * @param _barn the address of the Barn
+     * @param _temple the address of the Barn
      */
-    function setBarn(address _barn) external onlyOwner {
-        barn = IBarn(_barn);
+    function setTemple(address _temple) external onlyOwner {
+        temple = ITemple(_temple);
     }
 
     /**

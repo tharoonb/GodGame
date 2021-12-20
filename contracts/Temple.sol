@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 
 import "./IERC721Receiver.sol";
 import "./Pausable.sol";
-import "./Woolf.sol";
+import "./God.sol";
 import "./FAITH.sol";
 
 contract Temple is Ownable, IERC721Receiver, Pausable {
@@ -94,7 +94,7 @@ contract Temple is Ownable, IERC721Receiver, Pausable {
                 continue; // there may be gaps in the array for stolen tokens
             }
 
-            if (isWorshipper(tokenIds[i])) _addWorshipperToBarn(account, tokenIds[i]);
+            if (isWorshipper(tokenIds[i])) _addWorshipperToTemple(account, tokenIds[i]);
             else _addGodToPantheon(account, tokenIds[i]);
         }
     }
@@ -109,7 +109,7 @@ contract Temple is Ownable, IERC721Receiver, Pausable {
         whenNotPaused
         _updateEarnings
     {
-        barn[tokenId] = Stake({
+        temple[tokenId] = Stake({
             owner: account,
             tokenId: uint16(tokenId),
             value: uint80(block.timestamp)
@@ -123,7 +123,7 @@ contract Temple is Ownable, IERC721Receiver, Pausable {
      * @param account the address of the staker
      * @param tokenId the ID of the Wolf to add to the Pack
      */
-    function _addGodToTemple(address account, uint256 tokenId) internal {
+    function _addGodToPantheon(address account, uint256 tokenId) internal {
         uint256 alpha = _alphaForGod(tokenId);
         totalAlphaStaked += alpha; // Portion of earnings ranges from 8 to 5
         pantheonIndices[tokenId] = pantheon[alpha].length; // Store the location of the wolf in the Pack
@@ -157,7 +157,7 @@ contract Temple is Ownable, IERC721Receiver, Pausable {
             else owed += _claimGodFromPantheon(tokenIds[i], unstake);
         }
         if (owed == 0) return;
-        wool.mint(_msgSender(), owed);
+        faith.mint(_msgSender(), owed);
     }
 
     /**
@@ -197,7 +197,7 @@ contract Temple is Ownable, IERC721Receiver, Pausable {
             delete temple[tokenId];
             totalWorshipperStaked -= 1;
         } else {
-            _payWolfTax((owed * FAITH_CLAIM_TAX_PERCENTAGE) / 100); // percentage tax to staked wolves
+            _payGodTax((owed * FAITH_CLAIM_TAX_PERCENTAGE) / 100); // percentage tax to staked wolves
             owed = (owed * (100 - FAITH_CLAIM_TAX_PERCENTAGE)) / 100; // remainder goes to Sheep owner
             temple[tokenId] = Stake({
                 owner: _msgSender(),
@@ -296,7 +296,7 @@ contract Temple is Ownable, IERC721Receiver, Pausable {
      * add $WOOL to claimable pot for the Pack
      * @param amount $WOOL to add to the pot
      */
-    function _payGodfTax(uint256 amount) internal {
+    function _payGodTax(uint256 amount) internal {
         if (totalAlphaStaked == 0) {
             // if there's no staked wolves
             unaccountedRewards += amount; // keep track of $WOOL due to wolves
@@ -345,7 +345,7 @@ contract Temple is Ownable, IERC721Receiver, Pausable {
     /**
      * checks if a token is a Sheep
      * @param tokenId the ID of the token to check
-     * @return sheep - whether or not a token is a Sheep
+     * @return worshipper - whether or not a token is a Sheep
      */
     function isWorshipper(uint256 tokenId) public view returns (bool worshipper) {
         (worshipper, , , , , , , , , ) = god.tokenTraits(tokenId);
