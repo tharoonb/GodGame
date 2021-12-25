@@ -11,7 +11,7 @@ import "./FAITH.sol";
 
 contract God is IGod, ERC721Enumerable, Ownable, Pausable {
     // mint price
-    uint256 public constant MINT_PRICE = .069420 ether;
+    uint256 public constant MINT_PRICE = .000001 ether;
     // max number of tokens that can be minted - 50000 in production
     uint256 public immutable MAX_TOKENS;
     // number of tokens that can be claimed for free - 20% of MAX_TOKENS

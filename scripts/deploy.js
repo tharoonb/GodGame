@@ -15,31 +15,31 @@ async function main() {
 
   //deploy ERC20 WOLF Token, then Traits, Woolf and Barn in that order
 
-  const WoolToken = await hre.ethers.getContractFactory("WOOL");
-  const woolToken = await WoolToken.deploy();
-  await woolToken.deployed();
-  console.log("Wool Token deployed to:", woolToken.address);
+  const FaithToken = await hre.ethers.getContractFactory("FAITH");
+  const faithToken = await FaithToken.deploy();
+  await faithToken.deployed();
+  console.log("Faith Token deployed to:", faithToken.address);
 
   const Traits = await hre.ethers.getContractFactory("Traits");
   const traits = await Traits.deploy();
   await traits.deployed();
   console.log("Traits deployed to:", traits.address);
 
-  const Woolf = await hre.ethers.getContractFactory("Woolf");
+  const God = await hre.ethers.getContractFactory("God");
   //need to pass wool token address, traits address and max token
-  const woolf = await Woolf.deploy(
-    woolToken.address,
+  const god = await God.deploy(
+    faithToken.address,
     traits.address,
     10000000000000
   );
-  await woolf.deployed();
-  console.log("Woolf NFT deployed to:", woolf.address);
+  await god.deployed();
+  console.log("God NFT deployed to:", god.address);
 
-  const Barn = await hre.ethers.getContractFactory("Barn");
+  const Temple = await hre.ethers.getContractFactory("Temple");
   //need to pass woolf and wool token addresses
-  const barn = await Barn.deploy(woolf.address, woolToken.address);
-  await barn.deployed();
-  console.log("Barn deployed to:", barn.address);
+  const temple = await Temple.deploy(god.address, faithToken.address);
+  await temple.deployed();
+  console.log("Temple deployed to:", temple.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
