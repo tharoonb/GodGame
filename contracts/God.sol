@@ -46,18 +46,17 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         address _faith,
         address _traits,
         uint256 _maxTokens
-    ) ERC721("Olympus Game", "OGAME") {
+    ) ERC721("God Game", "GGAME") {
         faith = FAITH(_faith);
         traits = ITraits(_traits);
         MAX_TOKENS = _maxTokens;
         PAID_TOKENS = _maxTokens / 5;
 
-        // I know this looks weird but it saves users gas by making lookup O(1)
         // A.J. Walker's Alias Algorithm
-        // sheep
-        // fur
-        rarities[0] = [15, 50, 200, 250, 255];
-        aliases[0] = [4, 4, 4, 4, 4];
+        // human 
+        // tone
+        rarities[0] = [15, 50, 200, 250];
+        aliases[0] = [4, 4, 4, 4];
         // head
         rarities[1] = [
             190,
@@ -78,8 +77,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             100,
             100,
             245,
-            250,
-            255
+            250
         ];
         aliases[1] = [
             1,
@@ -100,7 +98,6 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             0,
             4,
             18,
-            19,
             19
         ];
         // ears
@@ -135,6 +132,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             236,
             252,
             224,
+            255,
             255
         ];
         aliases[3] = [
@@ -165,11 +163,12 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             27,
             27,
             27,
+            27,
             27
         ];
         // nose
-        rarities[4] = [175, 100, 40, 250, 115, 100, 185, 175, 180, 255];
-        aliases[4] = [3, 0, 4, 6, 6, 7, 8, 8, 9, 9];
+        rarities[4] = [175, 100, 40];
+        aliases[4] = [3, 0, 4];
         // mouth
         rarities[5] = [
             80,
@@ -179,17 +178,9 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             112,
             240,
             64,
-            160,
-            167,
-            217,
-            171,
-            64,
-            240,
-            126,
-            80,
-            255
+            160
         ];
-        aliases[5] = [1, 2, 3, 8, 2, 8, 8, 9, 9, 10, 13, 10, 13, 15, 13, 15];
+        aliases[5] = [1, 2, 3, 8, 2, 8, 8, 9];
         // neck
         rarities[6] = [255];
         aliases[6] = [0];
@@ -197,60 +188,28 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         rarities[7] = [
             243,
             189,
-            133,
-            133,
-            57,
-            95,
-            152,
-            135,
-            133,
-            57,
-            222,
-            168,
-            57,
-            57,
-            38,
-            114,
-            114,
-            114,
-            255
+            133
         ];
         aliases[7] = [
             1,
             7,
-            0,
-            0,
-            0,
-            0,
-            0,
-            10,
-            0,
-            0,
-            11,
-            18,
-            0,
-            0,
-            0,
-            1,
-            7,
-            11,
-            18
+            0
         ];
         // alphaIndex
         rarities[8] = [255];
         aliases[8] = [0];
 
-        // wolves
-        // fur
-        rarities[9] = [210, 90, 9, 9, 9, 150, 9, 255, 9];
-        aliases[9] = [5, 0, 0, 5, 5, 7, 5, 7, 5];
+        // gods
+        // tone
+        rarities[9] = [210, 90, 9, 9];
+        aliases[9] = [5, 0, 0, 5];
         // head
-        rarities[10] = [255];
-        aliases[10] = [0];
+        rarities[10] = [255, 90, 60, 9, 210, 80, 90, 90];
+        aliases[10] = [0, 5, 10, 15, 0, 11, 11, 11];
         // ears
         rarities[11] = [255];
         aliases[11] = [0];
-        // eyes
+        // weapons
         rarities[12] = [
             135,
             177,
@@ -262,23 +221,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             189,
             231,
             135,
-            135,
-            135,
-            135,
-            246,
-            150,
-            150,
-            156,
-            165,
-            171,
-            180,
-            186,
-            195,
-            201,
-            210,
-            243,
-            252,
-            255
+            135
         ];
         aliases[12] = [
             1,
@@ -291,45 +234,21 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             8,
             13,
             3,
-            6,
-            14,
-            15,
-            16,
-            16,
-            17,
-            18,
-            19,
-            20,
-            21,
-            22,
-            23,
-            24,
-            25,
-            26,
-            26,
-            26
+            6
         ];
         // nose
         rarities[13] = [255];
         aliases[13] = [0];
-        // mouth
+        // facial 
         rarities[14] = [
             239,
             244,
             249,
             234,
-            234,
-            234,
-            234,
-            234,
-            234,
-            234,
-            130,
-            255,
-            247
+            234
         ];
-        aliases[14] = [1, 2, 11, 0, 11, 11, 11, 11, 11, 11, 11, 11, 11];
-        // neck
+        aliases[14] = [1, 2, 11, 0, 11, 11];
+        // clothing
         rarities[15] = [
             75,
             180,
@@ -337,21 +256,14 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             120,
             60,
             150,
-            105,
-            195,
-            45,
-            225,
-            75,
-            45,
-            195,
-            120,
-            255
+            105
         ];
-        aliases[15] = [1, 9, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 14, 12, 14];
+        aliases[15] = [1, 9, 0, 0, 0, 0, 0];
         // feet
         rarities[16] = [255];
         aliases[16] = [0];
         // alphaIndex
+        // halos to signify alpha
         rarities[17] = [8, 160, 73, 255];
         aliases[17] = [2, 3, 3, 3];
     }
@@ -494,6 +406,9 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         t.isWorshipper = (seed & 0xFFFF) % 10 != 0;
         uint8 shift = t.isWorshipper ? 0 : 9;
         seed >>= 16;
+        // seed divided by 65536
+        // 0xFFFF is 65535
+        
         t.tone = selectTrait(uint16(seed & 0xFFFF), 0 + shift);
         seed >>= 16;
         t.head = selectTrait(uint16(seed & 0xFFFF), 1 + shift);
