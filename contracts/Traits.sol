@@ -20,18 +20,18 @@ contract Traits is Ownable, ITraits {
   string[9] _traitTypes = [
     "Tone",
     "Head",
-    "Ears",
+    "Clothes",
     "Eyes",
     "Nose",
+    "Beard",
     "Mouth",
-    "Neck",
     "Feet",
-    "Alpha"
+    "Divinity"
   ];
   // storage of each traits name and base64 PNG data
   mapping(uint8 => mapping(uint8 => Trait)) public traitData;
-  // mapping from alphaIndex to its score
-  string[4] _alphas = [
+  // mapping from divinityIndex to its score
+  string[4] _divinity = [
     "8",
     "7",
     "6",
@@ -81,7 +81,7 @@ contract Traits is Ownable, ITraits {
   /**
    * generates an entire SVG by composing multiple <image> elements of PNGs
    * @param tokenId the ID of the token to generate an SVG for
-   * @return a valid SVG of the Sheep / Wolf
+   * @return a valid SVG of the Worshipper or God
    */
   function drawSVG(uint256 tokenId) public view returns (string memory) {
     IGod.WorshipperGod memory s = god.getTokenTraits(tokenId);
@@ -89,12 +89,12 @@ contract Traits is Ownable, ITraits {
 
     string memory svgString = string(abi.encodePacked(
       drawTrait(traitData[0 + shift][s.tone]),
-      s.isWorshipper ? drawTrait(traitData[1 + shift][s.head]) : drawTrait(traitData[1 + shift][s.alphaIndex]),
-      s.isWorshipper ? drawTrait(traitData[2 + shift][s.ears]) : '',
+      s.isWorshipper ? drawTrait(traitData[1 + shift][s.head]) : drawTrait(traitData[1 + shift][s.divinityIndex]),
+      s.isWorshipper ? drawTrait(traitData[2 + shift][s.clothes]) : '',
       drawTrait(traitData[3 + shift][s.eyes]),
       s.isWorshipper ? drawTrait(traitData[4 + shift][s.nose]) : '',
-      drawTrait(traitData[5 + shift][s.mouth]),
-      s.isWorshipper ? '' : drawTrait(traitData[6 + shift][s.neck]),
+      drawTrait(traitData[5 + shift][s.beard]),
+      s.isWorshipper ? drawTrait(traitData[6 + shift][s.mouth]) : drawTrait(traitData[6 + shift][s.mouth]),
       s.isWorshipper ? drawTrait(traitData[7 + shift][s.feet]) : ''
     ));
 
@@ -133,20 +133,21 @@ contract Traits is Ownable, ITraits {
       traits = string(abi.encodePacked(
         attributeForTypeAndValue(_traitTypes[0], traitData[0][s.tone].name),',',
         attributeForTypeAndValue(_traitTypes[1], traitData[1][s.head].name),',',
-        attributeForTypeAndValue(_traitTypes[2], traitData[2][s.ears].name),',',
+        attributeForTypeAndValue(_traitTypes[2], traitData[2][s.clothes].name),',',
         attributeForTypeAndValue(_traitTypes[3], traitData[3][s.eyes].name),',',
         attributeForTypeAndValue(_traitTypes[4], traitData[4][s.nose].name),',',
         attributeForTypeAndValue(_traitTypes[5], traitData[5][s.mouth].name),',',
+        attributeForTypeAndValue(_traitTypes[6], traitData[6][s.beard].name),',',
         attributeForTypeAndValue(_traitTypes[7], traitData[7][s.feet].name),','
       ));
     } else {
       traits = string(abi.encodePacked(
         attributeForTypeAndValue(_traitTypes[0], traitData[9][s.tone].name),',',
-        attributeForTypeAndValue(_traitTypes[1], traitData[10][s.alphaIndex].name),',',
+        attributeForTypeAndValue(_traitTypes[1], traitData[10][s.divinityIndex].name),',',
         attributeForTypeAndValue(_traitTypes[3], traitData[12][s.eyes].name),',',
         attributeForTypeAndValue(_traitTypes[5], traitData[14][s.mouth].name),',',
-        attributeForTypeAndValue(_traitTypes[6], traitData[15][s.neck].name),',',
-        attributeForTypeAndValue("Alpha Score", _alphas[s.alphaIndex]),','
+        attributeForTypeAndValue(_traitTypes[6], traitData[15][s.beard].name),',',
+        attributeForTypeAndValue("Divinity Score", _divinity[s.divinityIndex]),','
       ));
     }
     return string(abi.encodePacked(
