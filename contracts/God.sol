@@ -78,7 +78,8 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             100,
             100,
             180,
-            180
+            180,
+            200
         ];
         aliases[1] = [
             1,
@@ -98,12 +99,13 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             12,
             14,
             9,
-            8
+            8,
+            6
         ];
         // clothes
         //8
         rarities[2] = [100, 60, 120, 70, 180, 140, 90, 150];
-        aliases[2] = [0, 0, 0, 0, 0, 0, 0, 0];
+        aliases[2] = [4, 6, 2, 0, 1, 3, 2, 5];
         // eyes
         //17
         rarities[3] = [
@@ -141,13 +143,13 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             2,
             5,
             0,
-            1,
+            3,
             7,
             1,
             10,
             5,
             10,
-            11,
+            4,
             12,
             11,
             9,
@@ -181,7 +183,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         aliases[5] = [3, 1, 2, 3, 4];
         // Mouth
         rarities[6] = [190, 227, 112, 200, 180];
-        aliases[6] = [2, 2, 2, 2, 2];
+        aliases[6] = [0, 2, 4, 1, 3];
         // Feet
         rarities[7] = [
             200,
@@ -202,19 +204,19 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
 
         // GODS
         // tone
-        rarities[9] = [90, 90, 90, 90];
-        aliases[9] = [0, 0, 0, 0];
+        rarities[9] = [90, 90, 90, 90, 50, 50, 30];
+        aliases[9] = [0, 2, 6, 4, 1, 2, 3];
         // halo
         rarities[10] = [10, 100, 180, 250];
         aliases[10] = [0, 1, 2, 3];
         // ears
         rarities[11] = [255];
         aliases[11] = [0];
-        // weapons
+        // head
         rarities[12] = [
             135,
             177,
-            219,
+            180,
             141,
             183
         ];
@@ -241,19 +243,22 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             140,
             150,
             120,
-            100
+            100,
+            160
         ];
-        aliases[14] = [1, 2, 9, 0, 10, 8, 8, 4, 1, 0, 6];
+        aliases[14] = [1, 2, 9, 0, 10, 8, 8, 4, 1, 0, 6, 8];
         // clothing
         rarities[15] = [
-            75,
+            140,
             130,
             165,
             120,
             100,
-            150
+            150,
+            160,
+            60
         ];
-        aliases[15] = [1, 4, 0, 1, 2, 0];
+        aliases[15] = [1, 4, 0, 1, 2, 0, 0, 3];
         // feet
         rarities[16] = [255];
         aliases[16] = [0];
