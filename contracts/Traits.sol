@@ -145,8 +145,8 @@ contract Traits is Ownable, ITraits {
         attributeForTypeAndValue(_traitTypes[0], traitData[9][s.tone].name),',',
         attributeForTypeAndValue(_traitTypes[1], traitData[10][s.divinityIndex].name),',',
         attributeForTypeAndValue(_traitTypes[3], traitData[12][s.eyes].name),',',
-        attributeForTypeAndValue(_traitTypes[5], traitData[14][s.mouth].name),',',
-        attributeForTypeAndValue(_traitTypes[6], traitData[15][s.beard].name),',',
+        attributeForTypeAndValue(_traitTypes[5], traitData[14][s.beard].name),',',
+        attributeForTypeAndValue(_traitTypes[6], traitData[15][s.mouth].name),',',
         attributeForTypeAndValue("Divinity Score", _divinity[s.divinityIndex]),','
       ));
     }
