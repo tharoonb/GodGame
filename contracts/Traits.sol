@@ -136,8 +136,8 @@ contract Traits is Ownable, ITraits {
         attributeForTypeAndValue(_traitTypes[2], traitData[2][s.clothes].name),',',
         attributeForTypeAndValue(_traitTypes[3], traitData[3][s.eyes].name),',',
         attributeForTypeAndValue(_traitTypes[4], traitData[4][s.nose].name),',',
-        attributeForTypeAndValue(_traitTypes[5], traitData[5][s.mouth].name),',',
-        attributeForTypeAndValue(_traitTypes[6], traitData[6][s.beard].name),',',
+        attributeForTypeAndValue(_traitTypes[5], traitData[5][s.beard].name),',',
+        attributeForTypeAndValue(_traitTypes[6], traitData[6][s.mouth].name),',',
         attributeForTypeAndValue(_traitTypes[7], traitData[7][s.feet].name),','
       ));
     } else {
