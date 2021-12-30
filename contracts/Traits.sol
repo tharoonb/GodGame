@@ -78,6 +78,40 @@ contract Traits is Ownable, ITraits {
     ));
   }
 
+// functions to generate random background color
+  /*function uint2str(uint256 _i)internal pure returns (string memory _uintAsString){
+      if (_i == 0) {
+          return "0";
+      }
+    uint256 j = _i;
+    uint256 len;
+    while (j != 0) {
+        len++;
+        j /= 10;
+        }
+        bytes memory bstr = new bytes(len);
+        uint256 k = len;
+        while (_i != 0) {
+            k = k - 1;
+            uint8 temp = (48 + uint8(_i - (_i / 10) * 10));
+            bytes1 b1 = bytes1(temp);
+            bstr[k] = b1;
+            _i /= 10;
+        }
+        return string(bstr);
+}
+   function random(string memory input) internal pure returns (uint256) {
+      return uint256(keccak256(abi.encodePacked(input)));
+  }
+  //
+  function pickRandColor(uint256 tokenID)internal pure returns (string memory){
+      uint256 rand = random(string(abi.encodePacked("RANDOM_BG_COLOR",Strings.toString(tokenID))));
+      rand = (rand % 999999) + 100000;
+      while (rand > 999999) {
+            rand = (rand % 999999) + 100000;
+         }
+    return uint2str(rand);
+    }*/
   /**
    * generates an entire SVG by composing multiple <image> elements of PNGs
    * @param tokenId the ID of the token to generate an SVG for
@@ -120,6 +154,7 @@ contract Traits is Ownable, ITraits {
       '"}'
     ));
   }
+  
 
   /**
    * generates an array composed of all the individual traits and values

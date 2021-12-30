@@ -63,7 +63,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         rarities[1] = [
             190,
             215,
-            240,
+            220,
             100,
             110,
             135,
@@ -73,7 +73,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             210,
             210,
             200,
-            80,
+            200,
             80,
             100,
             100,
@@ -102,10 +102,10 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         ];
         // clothes
         //8
-        rarities[2] = [200, 60, 180, 70, 180, 140, 90, 150];
+        rarities[2] = [100, 60, 120, 70, 180, 140, 90, 150];
         aliases[2] = [0, 0, 0, 0, 0, 0, 0, 0];
         // eyes
-        //12
+        //17
         rarities[3] = [
             220,
             221,
@@ -118,12 +118,12 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             228,
             140,
             224,
-            250/*,
+            200,
             160,
             241,
             207,
             173,
-            84,
+            84/*,
             254,
             220,
             196,
@@ -148,12 +148,12 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             5,
             10,
             11,
-            12/*,
-            13,
-            14,
+            12,
+            11,
+            9,
             16,
             11,
-            17,
+            6/*,
             23,
             13,
             14,
@@ -241,17 +241,16 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             140,
             150,
             120,
-            100,
-            90
+            100
         ];
-        aliases[14] = [1, 2, 11, 0, 11, 11, 8, 4, 1, 0, 6, 6];
+        aliases[14] = [1, 2, 9, 0, 10, 8, 8, 4, 1, 0, 6];
         // clothing
         rarities[15] = [
             75,
-            180,
+            130,
             165,
             120,
-            60,
+            100,
             150
         ];
         aliases[15] = [1, 4, 0, 1, 2, 0];
