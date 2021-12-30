@@ -173,7 +173,7 @@ contract Traits is Ownable, ITraits {
       '{"name": "',
       s.isWorshipper ? 'Worshipper #' : 'God #',
       tokenId.toString(),
-      '", "description": "Thousands of Sheep and Wolves compete on a farm in the metaverse. A tempting prize of $WOOL awaits, with deadly high stakes. All the metadata and images are generated and stored 100% on-chain. No IPFS. NO API. Just the Ethereum blockchain.", "image": "data:image/svg+xml;base64,',
+      '", "description": "Go to the Temple as a Worshipper to earn $FAITH, while Gods collect 20% of the $FAITH and attempt to win the favor of the Worshippers. Immerse yourself in ancient times in pursuit of a common goal: $FAITH. All data stored on-chain on the Metis blockchain. ", "image": "data:image/svg+xml;base64,',
       base64(bytes(drawSVG(tokenId))),
       '", "attributes":',
       compileAttributes(tokenId),
