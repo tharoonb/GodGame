@@ -1,0 +1,6 @@
+//Halos - Divinity
+[0,1,2,3]
+[["Crimson Red",""],
+["Titanium Blue",""],
+["Gold",""],
+["Bronze",""]]

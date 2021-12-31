@@ -8,8 +8,8 @@ import "./God.sol";
 import "./FAITH.sol";
 
 contract Temple is Ownable, IERC721Receiver, Pausable {
-    // maximum alpha score for a Wolf
-    uint8 public constant MAX_ALPHA = 8;
+    // maximum divinity score for a Wolf
+    uint8 public constant MAX_DIVINITY = 8;
 
     // struct to store a stake's token, owner, and earning values
     struct Stake {
@@ -29,16 +29,16 @@ contract Temple is Ownable, IERC721Receiver, Pausable {
 
     // maps tokenId to stake
     mapping(uint256 => Stake) public temple;
-    // maps alpha to all Wolf stakes with that alpha
+    // maps divinity to all Wolf stakes with that divinity
     mapping(uint256 => Stake[]) public pantheon;
     // tracks location of each Wolf in Pack
     mapping(uint256 => uint256) public pantheonIndices;
-    // total alpha scores staked
-    uint256 public totalAlphaStaked = 0;
+    // total divinity scores staked
+    uint256 public totalDivinityStaked = 0;
     // any rewards distributed when no wolves are staked
     uint256 public unaccountedRewards = 0;
-    // amount of $WOOL due for each alpha point staked
-    uint256 public faithPerAlpha = 0;
+    // amount of $WOOL due for each divinity point staked
+    uint256 public faithPerDivinity = 0;
 
     // sheep earn 10000 $WOOL per day
     uint256 public constant DAILY_FAITH_RATE = 10000 ether;
@@ -124,17 +124,17 @@ contract Temple is Ownable, IERC721Receiver, Pausable {
      * @param tokenId the ID of the Wolf to add to the Pack
      */
     function _addGodToPantheon(address account, uint256 tokenId) internal {
-        uint256 alpha = _alphaForGod(tokenId);
-        totalAlphaStaked += alpha; // Portion of earnings ranges from 8 to 5
-        pantheonIndices[tokenId] = pantheon[alpha].length; // Store the location of the wolf in the Pack
-        pantheon[alpha].push(
+        uint256 divinity = _divinityForGod(tokenId);
+        totalDivinityStaked += divinity; // Portion of earnings ranges from 8 to 5
+        pantheonIndices[tokenId] = pantheon[divinity].length; // Store the location of the wolf in the Pack
+        pantheon[divinity].push(
             Stake({
                 owner: account,
                 tokenId: uint16(tokenId),
-                value: uint80(faithPerAlpha)
+                value: uint80(faithPerDivinity)
             })
         ); // Add the wolf to the Pack
-        emit TokenStaked(account, tokenId, faithPerAlpha);
+        emit TokenStaked(account, tokenId, faithPerDivinity);
     }
 
     /** CLAIMING / UNSTAKING */
@@ -210,7 +210,7 @@ contract Temple is Ownable, IERC721Receiver, Pausable {
 
     /**
      * realize $WOOL earnings for a single Wolf and optionally unstake it
-     * Wolves earn $WOOL proportional to their Alpha rank
+     * Wolves earn $WOOL proportional to their divinity rank
      * @param tokenId the ID of the Wolf to claim earnings from
      * @param unstake whether or not to unstake the Wolf
      * @return owed - the amount of $WOOL earned
@@ -223,23 +223,23 @@ contract Temple is Ownable, IERC721Receiver, Pausable {
             god.ownerOf(tokenId) == address(this),
             "AINT A PART OF THE PANTHEON"
         );
-        uint256 alpha = _alphaForGod(tokenId);
-        Stake memory stake = pantheon[alpha][pantheonIndices[tokenId]];
+        uint256 divinity = _divinityForGod(tokenId);
+        Stake memory stake = pantheon[divinity][pantheonIndices[tokenId]];
         require(stake.owner == _msgSender(), "GODS ARE ALMIGHTY");
-        owed = (alpha) * (faithPerAlpha - stake.value); // Calculate portion of tokens based on Alpha
+        owed = (divinity) * (faithPerDivinity - stake.value); // Calculate portion of tokens based on Divinity
         if (unstake) {
-            totalAlphaStaked -= alpha; // Remove Alpha from total staked
+            totalDivinityStaked -= divinity; // Remove Divinity from total staked
             god.safeTransferFrom(address(this), _msgSender(), tokenId, ""); // Send back Wolf
-            Stake memory lastStake = pantheon[alpha][pantheon[alpha].length - 1];
-            pantheon[alpha][pantheonIndices[tokenId]] = lastStake; // Shuffle last Wolf to current position
+            Stake memory lastStake = pantheon[divinity][pantheon[divinity].length - 1];
+            pantheon[divinity][pantheonIndices[tokenId]] = lastStake; // Shuffle last Wolf to current position
             pantheonIndices[lastStake.tokenId] = pantheonIndices[tokenId];
-            pantheon[alpha].pop(); // Remove duplicate
+            pantheon[divinity].pop(); // Remove duplicate
             delete pantheonIndices[tokenId]; // Delete old mapping
         } else {
-            pantheon[alpha][pantheonIndices[tokenId]] = Stake({
+            pantheon[divinity][pantheonIndices[tokenId]] = Stake({
                 owner: _msgSender(),
                 tokenId: uint16(tokenId),
-                value: uint80(faithPerAlpha)
+                value: uint80(faithPerDivinity)
             }); // reset stake
         }
         emit GodClaimed(tokenId, owed, unstake);
@@ -254,7 +254,7 @@ contract Temple is Ownable, IERC721Receiver, Pausable {
         uint256 tokenId;
         Stake memory stake;
         Stake memory lastStake;
-        uint256 alpha;
+        uint256 divinity;
         for (uint256 i = 0; i < tokenIds.length; i++) {
             tokenId = tokenIds[i];
             if (isWorshipper(tokenId)) {
@@ -270,20 +270,20 @@ contract Temple is Ownable, IERC721Receiver, Pausable {
                 totalWorshipperStaked -= 1;
                 emit WorshipperClaimed(tokenId, 0, true);
             } else {
-                alpha = _alphaForGod(tokenId);
-                stake = pantheon[alpha][pantheonIndices[tokenId]];
+                divinity = _divinityForGod(tokenId);
+                stake = pantheon[divinity][pantheonIndices[tokenId]];
                 require(stake.owner == _msgSender(), "SWIPER, NO SWIPING");
-                totalAlphaStaked -= alpha; // Remove Alpha from total staked
+                totalDivinityStaked -= divinity; // Remove divinity from total staked
                 god.safeTransferFrom(
                     address(this),
                     _msgSender(),
                     tokenId,
                     ""
                 ); // Send back Wolf
-                lastStake = pantheon[alpha][pantheon[alpha].length - 1];
-                pantheon[alpha][pantheonIndices[tokenId]] = lastStake; // Shuffle last Wolf to current position
+                lastStake = pantheon[divinity][pantheon[divinity].length - 1];
+                pantheon[divinity][pantheonIndices[tokenId]] = lastStake; // Shuffle last Wolf to current position
                 pantheonIndices[lastStake.tokenId] = pantheonIndices[tokenId];
-                pantheon[alpha].pop(); // Remove duplicate
+                pantheon[divinity].pop(); // Remove duplicate
                 delete pantheonIndices[tokenId]; // Delete old mapping
                 emit GodClaimed(tokenId, 0, true);
             }
@@ -297,13 +297,13 @@ contract Temple is Ownable, IERC721Receiver, Pausable {
      * @param amount $WOOL to add to the pot
      */
     function _payGodTax(uint256 amount) internal {
-        if (totalAlphaStaked == 0) {
+        if (totalDivinityStaked == 0) {
             // if there's no staked wolves
             unaccountedRewards += amount; // keep track of $WOOL due to wolves
             return;
         }
         // makes sure to include any unaccounted $WOOL
-        faithPerAlpha += (amount + unaccountedRewards) / totalAlphaStaked;
+        faithPerDivinity += (amount + unaccountedRewards) / totalDivinityStaked;
         unaccountedRewards = 0;
     }
 
@@ -352,13 +352,13 @@ contract Temple is Ownable, IERC721Receiver, Pausable {
     }
 
     /**
-     * gets the alpha score for a Wolf
-     * @param tokenId the ID of the Wolf to get the alpha score for
-     * @return the alpha score of the Wolf (5-8)
+     * gets the divinity score for a Wolf
+     * @param tokenId the ID of the Wolf to get the divinity score for
+     * @return the divinity score of the Wolf (5-8)
      */
-    function _alphaForGod(uint256 tokenId) internal view returns (uint8) {
-        (, , , , , , , , , uint8 alphaIndex) = god.tokenTraits(tokenId);
-        return MAX_ALPHA - alphaIndex; // alpha index is 0-3
+    function _divinityForGod(uint256 tokenId) internal view returns (uint8) {
+        (, , , , , , , , , uint8 divinityIndex) = god.tokenTraits(tokenId);
+        return MAX_DIVINITY - divinityIndex; // divinity index is 0-3
     }
 
     /**
@@ -367,16 +367,16 @@ contract Temple is Ownable, IERC721Receiver, Pausable {
      * @return the owner of the randomly selected Wolf thief
      */
     function randomGodOwner(uint256 seed) external view returns (address) {
-        if (totalAlphaStaked == 0) return address(0x0);
-        uint256 bucket = (seed & 0xFFFFFFFF) % totalAlphaStaked; // choose a value from 0 to total alpha staked
+        if (totalDivinityStaked == 0) return address(0x0);
+        uint256 bucket = (seed & 0xFFFFFFFF) % totalDivinityStaked; // choose a value from 0 to total divinity staked
         uint256 cumulative;
         seed >>= 32;
-        // loop through each bucket of Wolves with the same alpha score
-        for (uint256 i = MAX_ALPHA - 3; i <= MAX_ALPHA; i++) {
+        // loop through each bucket of Wolves with the same divinity score
+        for (uint256 i = MAX_DIVINITY - 3; i <= MAX_DIVINITY; i++) {
             cumulative += pantheon[i].length * i;
             // if the value is not inside of that bucket, keep going
             if (bucket >= cumulative) continue;
-            // get the address of a random Wolf with that alpha score
+            // get the address of a random Wolf with that divinity score
             return pantheon[i][seed % pantheon[i].length].owner;
         }
         return address(0x0);
