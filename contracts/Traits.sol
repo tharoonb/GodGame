@@ -78,6 +78,40 @@ contract Traits is Ownable, ITraits {
     ));
   }
 
+// functions to generate random background color
+  /*function uint2str(uint256 _i)internal pure returns (string memory _uintAsString){
+      if (_i == 0) {
+          return "0";
+      }
+    uint256 j = _i;
+    uint256 len;
+    while (j != 0) {
+        len++;
+        j /= 10;
+        }
+        bytes memory bstr = new bytes(len);
+        uint256 k = len;
+        while (_i != 0) {
+            k = k - 1;
+            uint8 temp = (48 + uint8(_i - (_i / 10) * 10));
+            bytes1 b1 = bytes1(temp);
+            bstr[k] = b1;
+            _i /= 10;
+        }
+        return string(bstr);
+}
+   function random(string memory input) internal pure returns (uint256) {
+      return uint256(keccak256(abi.encodePacked(input)));
+  }
+  //
+  function pickRandColor(uint256 tokenID)internal pure returns (string memory){
+      uint256 rand = random(string(abi.encodePacked("RANDOM_BG_COLOR",Strings.toString(tokenID))));
+      rand = (rand % 999999) + 100000;
+      while (rand > 999999) {
+            rand = (rand % 999999) + 100000;
+         }
+    return uint2str(rand);
+    }*/
   /**
    * generates an entire SVG by composing multiple <image> elements of PNGs
    * @param tokenId the ID of the token to generate an SVG for
@@ -120,6 +154,7 @@ contract Traits is Ownable, ITraits {
       '"}'
     ));
   }
+  
 
   /**
    * generates an array composed of all the individual traits and values
@@ -136,8 +171,8 @@ contract Traits is Ownable, ITraits {
         attributeForTypeAndValue(_traitTypes[2], traitData[2][s.clothes].name),',',
         attributeForTypeAndValue(_traitTypes[3], traitData[3][s.eyes].name),',',
         attributeForTypeAndValue(_traitTypes[4], traitData[4][s.nose].name),',',
-        attributeForTypeAndValue(_traitTypes[5], traitData[5][s.mouth].name),',',
-        attributeForTypeAndValue(_traitTypes[6], traitData[6][s.beard].name),',',
+        attributeForTypeAndValue(_traitTypes[5], traitData[5][s.beard].name),',',
+        attributeForTypeAndValue(_traitTypes[6], traitData[6][s.mouth].name),',',
         attributeForTypeAndValue(_traitTypes[7], traitData[7][s.feet].name),','
       ));
     } else {
@@ -145,8 +180,8 @@ contract Traits is Ownable, ITraits {
         attributeForTypeAndValue(_traitTypes[0], traitData[9][s.tone].name),',',
         attributeForTypeAndValue(_traitTypes[1], traitData[10][s.divinityIndex].name),',',
         attributeForTypeAndValue(_traitTypes[3], traitData[12][s.eyes].name),',',
-        attributeForTypeAndValue(_traitTypes[5], traitData[14][s.mouth].name),',',
-        attributeForTypeAndValue(_traitTypes[6], traitData[15][s.beard].name),',',
+        attributeForTypeAndValue(_traitTypes[5], traitData[14][s.beard].name),',',
+        attributeForTypeAndValue(_traitTypes[6], traitData[15][s.mouth].name),',',
         attributeForTypeAndValue("Divinity Score", _divinity[s.divinityIndex]),','
       ));
     }
@@ -173,7 +208,7 @@ contract Traits is Ownable, ITraits {
       '{"name": "',
       s.isWorshipper ? 'Worshipper #' : 'God #',
       tokenId.toString(),
-      '", "description": "Thousands of Sheep and Wolves compete on a farm in the metaverse. A tempting prize of $WOOL awaits, with deadly high stakes. All the metadata and images are generated and stored 100% on-chain. No IPFS. NO API. Just the Ethereum blockchain.", "image": "data:image/svg+xml;base64,',
+      '", "description": "Go to the Temple as a Worshipper to earn $FAITH, while Gods collect 20% of the $FAITH and attempt to win the favor of the Worshippers. Immerse yourself in ancient times in pursuit of a common goal: $FAITH. All data stored on-chain on the Metis blockchain. ", "image": "data:image/svg+xml;base64,',
       base64(bytes(drawSVG(tokenId))),
       '", "attributes":',
       compileAttributes(tokenId),

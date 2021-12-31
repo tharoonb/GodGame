@@ -26,15 +26,15 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
     mapping(uint256 => uint256) public existingCombinations;
 
     // list of probabilities for each trait type
-    // 0 - 9 are associated with Sheep, 10 - 18 are associated with Wolves
+    // 0 - 9 are associated with Worshipper, 10 - 18 are associated with God
     uint8[][18] public rarities;
     // list of aliases for Walker's Alias algorithm
-    // 0 - 9 are associated with Sheep, 10 - 18 are associated with Wolves
+    // 0 - 9 are associated with Worshipper, 10 - 18 are associated with God
     uint8[][18] public aliases;
 
-    // reference to the Barn for choosing random Wolf thieves
+    // reference to the Temple for choosing random God steals favor
     ITemple public temple;
-    // reference to $WOOL for burning on mint
+    // reference to $FAITH for burning on mint
     FAITH public faith;
     // reference to Traits
     ITraits public traits;
@@ -63,7 +63,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         rarities[1] = [
             190,
             215,
-            240,
+            220,
             100,
             110,
             135,
@@ -73,12 +73,13 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             210,
             210,
             200,
-            80,
+            200,
             80,
             100,
             100,
             180,
-            180
+            180,
+            200
         ];
         aliases[1] = [
             1,
@@ -98,14 +99,15 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             12,
             14,
             9,
-            8
+            8,
+            6
         ];
         // clothes
         //8
-        rarities[2] = [30, 60, 60, 70, 200, 100, 90, 60];
-        aliases[2] = [0, 0, 0, 0, 0, 0, 0, 0];
+        rarities[2] = [100, 60, 120, 70, 180, 140, 90, 150];
+        aliases[2] = [4, 6, 2, 0, 1, 3, 2, 5];
         // eyes
-        //12
+        //17
         rarities[3] = [
             220,
             221,
@@ -118,12 +120,12 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             228,
             140,
             224,
-            250/*,
+            200,
             160,
             241,
             207,
             173,
-            84,
+            84/*,
             254,
             220,
             196,
@@ -141,19 +143,19 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             2,
             5,
             0,
-            1,
+            3,
             7,
             1,
             10,
             5,
             10,
+            4,
+            12,
             11,
-            12/*,
-            13,
-            14,
+            9,
             16,
             11,
-            17,
+            6/*,
             23,
             13,
             14,
@@ -180,20 +182,18 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         ];
         aliases[5] = [3, 1, 2, 3, 4];
         // Mouth
-        rarities[6] = [255/*, 190, 227, 112, 240*/];
-        aliases[6] = [0/*2, 2, 2, 2, 2*/];
+        rarities[6] = [190, 227, 112, 200, 180];
+        aliases[6] = [0, 2, 4, 1, 3];
         // Feet
         rarities[7] = [
-            255/*
-            243,
+            200,
             189,
-            133*/
+            133
         ];
         aliases[7] = [
-            0/*
             0,
             1,
-            2*/
+            2
         ];
         // divinityIndex
         rarities[8] = [255];
@@ -204,69 +204,66 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
 
         // GODS
         // tone
-        rarities[9] = [255/*, 90, 9, 9*/];
-        aliases[9] = [0/*, 0, 0, 5*/];
-        // head
-        rarities[10] = [255/*, 90, 60, 9, 210, 80, 90, 90*/];
-        aliases[10] = [0/*, 5, 10, 15, 0, 11, 11, 11*/];
+        rarities[9] = [90, 90, 90, 90, 50, 50, 30];
+        aliases[9] = [0, 2, 6, 4, 1, 2, 3];
+        // halo
+        rarities[10] = [10, 100, 180, 250];
+        aliases[10] = [0, 1, 2, 3];
         // ears
         rarities[11] = [255];
         aliases[11] = [0];
-        // weapons
+        // head
         rarities[12] = [
-            135/*,
-            177,
-            219,
-            141,
-            183,
-            225,
-            147,
-            189,
-            231,
             135,
-            135*/
+            177,
+            180,
+            141,
+            183
         ];
         aliases[12] = [
-            0/*,
+            0,
             2,
             3,
             4,
-            5,
-            6,
-            7,
-            8,
-            13,
-            3,
-            6*/
+            4
         ];
-        // nose
+        
         rarities[13] = [255];
         aliases[13] = [0];
-        // facial 
+
+        // weapons
         rarities[14] = [
-            239/*,
-            244,
-            249,
+            200,
+            220,
+            230,
             234,
-            234*/
+            234,
+            150,
+            180,
+            140,
+            150,
+            120,
+            100,
+            160
         ];
-        aliases[14] = [1/*, 2, 11, 0, 11, 11*/];
+        aliases[14] = [1, 2, 9, 0, 10, 8, 8, 4, 1, 0, 6, 8];
         // clothing
         rarities[15] = [
-            75/*,
-            180,
+            140,
+            130,
             165,
             120,
-            60,
+            100,
             150,
-            105*/
+            160,
+            60
         ];
-        aliases[15] = [1, 9, 0, 0, 0, 0, 0];
+        aliases[15] = [1, 4, 0, 1, 2, 0, 0, 3];
         // feet
         rarities[16] = [255];
         aliases[16] = [0];
         // divinityIndex
-        // halos to signify divinity
+        // halos 
         rarities[17] = [8, 160, 73, 255];
         aliases[17] = [2, 3, 3, 3];
     }

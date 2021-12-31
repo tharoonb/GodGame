@@ -30,7 +30,7 @@ async function main() {
   const god = await God.deploy(
     faithToken.address,
     traits.address,
-    10000000000000
+    5000
   );
   await god.deployed();
   console.log("God NFT deployed to:", god.address);
