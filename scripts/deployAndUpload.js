@@ -508,16 +508,30 @@ async function main() {
     ],
   ];
 
-  const traits = await ethers.getContractFactory("Traits");
-  traitsContract = traits.attach(traits.address);
+  //setting contract addresss
+  //set god in traits
+  // set temple in god
 
-  for (i = 0; i < indexTrait - 1; ++i) {
+  const traitsContract = traits.attach(traits.address);
+
+  const setGodTx = await traitsContract.setGod(god.address);
+  await setGodTx.wait();
+  console.log("God has been set for traits, tx hash: " + setGodTx.hash);
+
+  const godContract = god.attach(god.address);
+
+  const setTempleTx = await godContract.setTemple(temple.address);
+  await setTempleTx.wait();
+  console.log("Temple has been set for god: " + setTempleTx.hash);
+
+  for (let i = 0; i <= indexTrait.length - 1; i++) {
     const tx = await traitsContract.uploadTraits(
       indexTrait[i],
       traitLen[i],
       encodedTraits[i]
     );
     await tx.wait();
+    console.log(i);
     console.log("This is the transaction hash:" + tx.hash);
   }
 

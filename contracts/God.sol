@@ -11,7 +11,7 @@ import "./FAITH.sol";
 
 contract God is IGod, ERC721Enumerable, Ownable, Pausable {
     // mint price
-    uint256 public constant MINT_PRICE = .000001 ether;
+    uint256 public constant MINT_PRICE = .2 ether;
     // max number of tokens that can be minted - 50000 in production
     uint256 public immutable MAX_TOKENS;
     // number of tokens that can be claimed for free - 20% of MAX_TOKENS
@@ -53,7 +53,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         PAID_TOKENS = _maxTokens / 5;
 
         // A.J. Walker's Alias Algorithm
-        // human 
+        // human
         // tone
         //4
         rarities[0] = [100, 100, 100, 100];
@@ -125,7 +125,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             241,
             207,
             173,
-            84/*,
+            84 /*,
             254,
             220,
             196,
@@ -155,7 +155,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             9,
             16,
             11,
-            6/*,
+            6 /*,
             23,
             13,
             14,
@@ -173,34 +173,17 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         aliases[4] = [2, 0, 1];
         // facial hair
         //5
-        rarities[5] = [
-            80,
-            225,
-            227,
-            228,
-            112
-        ];
+        rarities[5] = [80, 225, 227, 228, 112];
         aliases[5] = [3, 1, 2, 3, 4];
         // Mouth
         rarities[6] = [190, 227, 112, 200, 180];
         aliases[6] = [0, 2, 4, 1, 3];
         // Feet
-        rarities[7] = [
-            200,
-            189,
-            133
-        ];
-        aliases[7] = [
-            0,
-            1,
-            2
-        ];
+        rarities[7] = [200, 189, 133];
+        aliases[7] = [0, 1, 2];
         // divinityIndex
         rarities[8] = [255];
         aliases[8] = [0];
-
-
-
 
         // GODS
         // tone
@@ -213,21 +196,9 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         rarities[11] = [255];
         aliases[11] = [0];
         // head
-        rarities[12] = [
-            135,
-            177,
-            180,
-            141,
-            183
-        ];
-        aliases[12] = [
-            0,
-            2,
-            3,
-            4,
-            4
-        ];
-        
+        rarities[12] = [135, 177, 180, 141, 183];
+        aliases[12] = [0, 2, 3, 4, 4];
+
         rarities[13] = [255];
         aliases[13] = [0];
 
@@ -248,22 +219,13 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         ];
         aliases[14] = [1, 2, 9, 0, 10, 8, 8, 4, 1, 0, 6, 8];
         // clothing
-        rarities[15] = [
-            140,
-            130,
-            165,
-            120,
-            100,
-            150,
-            160,
-            60
-        ];
+        rarities[15] = [140, 130, 165, 120, 100, 150, 160, 60];
         aliases[15] = [1, 4, 0, 1, 2, 0, 0, 3];
         // feet
         rarities[16] = [255];
         aliases[16] = [0];
         // divinityIndex
-        // halos 
+        // halos
         rarities[17] = [8, 160, 73, 255];
         aliases[17] = [2, 3, 3, 3];
     }
@@ -408,7 +370,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         seed >>= 16;
         // seed divided by 65536
         // 0xFFFF is 65535
-        
+
         t.tone = selectTrait(uint16(seed & 0xFFFF), 0 + shift);
         seed >>= 16;
         t.head = selectTrait(uint16(seed & 0xFFFF), 1 + shift);
@@ -433,7 +395,11 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
      * @param s the struct to pack into a hash
      * @return the 256 bit hash of the struct
      */
-    function structToHash(WorshipperGod memory s) internal pure returns (uint256) {
+    function structToHash(WorshipperGod memory s)
+        internal
+        pure
+        returns (uint256)
+    {
         return
             uint256(
                 bytes32(
