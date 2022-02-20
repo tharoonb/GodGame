@@ -40,7 +40,7 @@ contract Traits is Ownable, ITraits {
 
   IGod public god;
 
-  constructor() {}
+  //constructor() {}
 
   /** ADMIN */
 

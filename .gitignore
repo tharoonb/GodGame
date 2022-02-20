@@ -5,7 +5,6 @@ coverage.json
 typechain
 .secret
 traits
-
 #Hardhat files
 cache
 artifacts
