@@ -11,7 +11,7 @@ import "./FAITH.sol";
 
 contract God is IGod, ERC721Enumerable, Ownable, Pausable {
     // mint price
-    uint256 public constant MINT_PRICE = .000001 ether;
+    uint256 public constant MINT_PRICE = .00001 ether;
     // max number of tokens that can be minted - 50000 in production
     uint256 public immutable MAX_TOKENS;
     // number of tokens that can be claimed for free - 20% of MAX_TOKENS
@@ -56,8 +56,8 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         // human
         // tone
         //4
-        rarities[0] = [100, 100, 100, 100];
-        aliases[0] = [3, 3, 3, 3];
+        rarities[0] = [100, 100, 100, 100, 100, 100, 100, 100];
+        aliases[0] = [2, 1, 4, 5, 3, 6, 3, 0];
         // head
         //18
         rarities[1] = [
@@ -79,14 +79,25 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             100,
             180,
             180,
-            200
+            200,
+            180,
+            200,
+            180,
+            200,
+            180,
+            200,
+            200,
+            180,
+            200,
+            180,
+            100
         ];
         aliases[1] = [
             1,
             12,
             4,
             0,
-            5,
+            3,
             6,
             7,
             9,
@@ -94,18 +105,30 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             10,
             11,
             15,
-            0,
+            2,
             0,
             12,
             14,
             9,
             8,
-            6
+            6,
+            14,
+            24,
+            23,
+            13,
+            18,
+            27,
+            11,
+            19,
+            28,
+            5,
+            1
+
         ];
         // clothes
         //8
-        rarities[2] = [100, 60, 120, 70, 180, 140, 90, 150];
-        aliases[2] = [4, 6, 2, 0, 1, 3, 2, 5];
+        rarities[2] = [100, 60, 120, 70, 180, 140, 90, 150, 150, 120, 100, 140, 90, 100, 120];
+        aliases[2] = [4, 6, 2, 0, 1, 3, 2, 5, 8, 12, 10, 9, 7, 11, 13];
         // eyes
         //17
         rarities[3] = [
@@ -125,18 +148,7 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             241,
             207,
             173,
-            84 /*,
-            254,
-            220,
-            196,
-            140,
-            168,
-            252,
-            140,
-            183,
-            236,
-            252,
-            224*/
+            84 
         ];
         aliases[3] = [
             1,
@@ -155,32 +167,21 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             9,
             16,
             11,
-            6 /*,
-            23,
-            13,
-            14,
-            17,
-            23,
-            23,
-            24,
-            27,
-            27,
-            26,
-            27*/
+            6 
         ];
         // nose
         rarities[4] = [75, 100, 40];
         aliases[4] = [2, 0, 1];
         // facial hair
         //5
-        rarities[5] = [80, 225, 227, 228, 112];
-        aliases[5] = [3, 1, 2, 3, 4];
+        rarities[5] = [80, 225, 227, 228, 112, 220, 140];
+        aliases[5] = [3, 1, 2, 3, 4, 0, 5];
         // Mouth
         rarities[6] = [190, 227, 112, 200, 180];
         aliases[6] = [0, 2, 4, 1, 3];
         // Feet
-        rarities[7] = [200, 189, 133];
-        aliases[7] = [0, 1, 2];
+        rarities[7] = [200, 189, 133, 100, 90, 100, 70, 100];
+        aliases[7] = [0, 1, 2, 6, 3, 4, 5, 0];
         // divinityIndex
         rarities[8] = [255];
         aliases[8] = [0];
