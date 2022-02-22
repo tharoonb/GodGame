@@ -64,7 +64,7 @@ contract Traits is Ownable, ITraits {
   }
 
   /** RENDER */
-
+  
   /**
    * generates an <image> element using base64 encoded PNGs
    * @param trait the trait storing the PNG data
@@ -112,6 +112,26 @@ contract Traits is Ownable, ITraits {
          }
     return uint2str(rand);
     }*/
+    
+    // color palletes
+  string[] bgArr = ["8bd3fb","971111","ffcf40","3bd6c6","be4225","d50032","cb558c","4700ff","cabb1e","00000"];
+  string[] radArr = ["a5a2f3","390202","a67c00","faf57b","#9ef5bd","9600ff", "96e19d", "f29e38", "f3f3f3"];
+
+  /**
+   * generates an entire SVG by composing multiple <image> elements of PNGs
+   * @param tokenId the ID of the token to generate an SVG for
+   * @return a hex string to create background color
+   */
+  function bgColor (uint256 tokenId) internal view returns (string memory){
+    uint256 index= uint256(keccak256(abi.encodePacked(bgArr[(tokenId**tokenId) % 10])))%10;
+    string memory bgHex = bgArr[index];
+    return bgHex;
+  }
+  function radialColor (uint256 tokenId) internal view returns (string memory){
+    uint256 index= uint256(keccak256(abi.encodePacked(radArr[(tokenId**tokenId) % 10])))%10;
+    string memory radialHex = radArr[index];
+    return radialHex;
+  }
   /**
    * generates an entire SVG by composing multiple <image> elements of PNGs
    * @param tokenId the ID of the token to generate an SVG for
@@ -133,7 +153,11 @@ contract Traits is Ownable, ITraits {
     ));
 
     return string(abi.encodePacked(
-      '<svg id="God" width="100%" height="100%" version="1.1" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">',
+      '<svg id="God" width="100%" height="100%" version="1.1" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <radialGradient id="radial" x1="0%" y1="0%" x2="0%" y2="100%" spreadMethod="pad"> <stop offset="70%"   stop-color="#',
+      bgColor(tokenId),
+      'stop-opacity="1"/> <stop offset="200%" stop-color="#',
+      radialColor(tokenId), 
+      '" stop-opacity="1"/></radialGradient> <rect x="0" y="0" width="100" height="100" style="fill:url(#radial)" />',
       svgString,
       "</svg>"
     ));
