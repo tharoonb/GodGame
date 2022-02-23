@@ -127,8 +127,8 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
         ];
         // clothes
         //8
-        rarities[2] = [100, 60, 120, 70, 180, 140, 90, 150, 150, 120, 100, 140, 90, 100, 120];
-        aliases[2] = [4, 6, 2, 0, 1, 3, 2, 5, 8, 12, 10, 9, 7, 11, 13];
+        rarities[2] = [100, 100, 120, 90, 180, 140, 90, 150, 150, 120, 100, 120, 90, 100, 120, 90];
+        aliases[2] = [4, 6, 2, 0, 1, 3, 2, 5, 8, 12, 10, 9, 7, 11, 13, 14];
         // eyes
         //17
         rarities[3] = [
@@ -148,7 +148,10 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             180,
             207,
             173,
-            84 
+            84,
+            80,
+            90,
+            100 
         ];
         aliases[3] = [
             1,
@@ -167,7 +170,10 @@ contract God is IGod, ERC721Enumerable, Ownable, Pausable {
             9,
             16,
             11,
-            6 
+            6,
+            8,
+            17,
+            14
         ];
         // nose
         rarities[4] = [75, 100, 40];
