@@ -144,8 +144,7 @@ contract Traits is Ownable, ITraits {
    */
   function bgColor (uint256 tokenId) internal view returns (uint256){
     uint256 index= uint256(keccak256(abi.encodePacked(bgArr[(tokenId) % 10], "RAND_COLOR",pickRandColor(tokenId))))%10;
-    string memory bgHex = bgArr[index];
-    return bgHex;
+    return index;
   }
   
 
